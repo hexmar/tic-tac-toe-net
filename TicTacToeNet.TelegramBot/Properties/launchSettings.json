@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TicTacToeNet.TelegramBot": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
