@@ -1,0 +1,6 @@
+@HttpRequestLogger_HostAddress = http://localhost:5014
+
+GET {{HttpRequestLogger_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
