@@ -16,7 +16,8 @@ internal class TelegramBotApiClient(
         try
         {
             var offsetQuery = offset > 0 ? $"&offset={offset}" : string.Empty;
-            var response = await client.GetAsync($"getUpdates?limit=1&timeout=30{offsetQuery}", cancellationToken); // TODO: @hexmar Move timeout to configuration
+            var timeout = Convert.ToInt32(client.Timeout.TotalSeconds) - 10;
+            var response = await client.GetAsync($"getUpdates?limit=1&timeout={timeout}{offsetQuery}", cancellationToken);
             if (response.IsSuccessStatusCode)
             {
                 using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
@@ -82,12 +83,29 @@ internal class TelegramBotApiClient(
             if (!response.IsSuccessStatusCode)
             {
                 using var scope = logger.BeginScope("Error content: {Content}", await response.Content.ReadAsStringAsync(cancellationToken));
-                logger.LogWarning("Send text message ended with {Code} code", response.StatusCode);
+                logger.LogWarning("Edit text message ended with {Code} code", response.StatusCode);
             }
         }
         catch (HttpRequestException ex)
         {
-            logger.LogError(ex, "Send text message failed");
+            logger.LogError(ex, "Edit text message failed");
+        }
+    }
+
+    public async Task SendAnswerGuestQuery<T>(GuestQueryAnswer<T> message, CancellationToken cancellationToken) where T : GuestTextMessageResult
+    {
+        try
+        {
+            var response = await client.PostAsJsonAsync("answerGuestQuery", message, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                using var scope = logger.BeginScope("Error content: {Content}", await response.Content.ReadAsStringAsync(cancellationToken));
+                logger.LogWarning("Send guest answer ended with {Code} code", response.StatusCode);
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogError(ex, "Send guest answer failed");
         }
     }
 }

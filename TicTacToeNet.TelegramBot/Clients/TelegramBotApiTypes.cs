@@ -24,6 +24,42 @@ internal static class TelegramBotApiTypes
         public required int ChatId { get; set; }
     }
 
+    internal class GuestQueryAnswer<T> where T : GuestTextMessageResult
+    {
+        [JsonPropertyName("guest_query_id")]
+        public required string GuestQueryId { get; set; }
+
+        [JsonPropertyName("result")]
+        public required T Result { get; set; }
+    }
+
+    internal class GuestTextMessage : GuestQueryAnswer<GuestTextMessageResult>
+    { }
+
+    internal class GuestTextMessageResult
+    {
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = "article";
+
+        [JsonPropertyName("id")]
+        public required int Id { get; set; }
+
+        [JsonPropertyName("title")]
+        public string Title { get; set; } = "TicTacToe game by @RubyTicTacBot";
+
+        [JsonPropertyName("input_message_content")]
+        public required GuestTextMessageContent Content { get; set; }
+    }
+
+    internal class GuestTextMessageContent
+    {
+        [JsonPropertyName("message_text")]
+        public required string Text { get; set; }
+
+        [JsonPropertyName("parse_mode")]
+        public string ParseMode { get; set; } = "Markdown";
+    }
+
     internal class EditChatTextMessage : ChatTextMessage, IEditTextMessage
     {
         [JsonPropertyName("message_id")]
@@ -48,10 +84,19 @@ internal static class TelegramBotApiTypes
         public required string Text { get; set; }
 
         [JsonPropertyName("callback_data")]
-        public required int CallbackData { get; set; }
+        public required string CallbackData { get; set; }
     }
 
     internal sealed class ChatGameMessage : ChatTextMessage
+    {
+        [JsonPropertyName("reply_markup")]
+        public required GameMessageReplyMarkup ReplyMarkup { get; set; }
+    }
+
+    internal sealed class GuestGameMessage : GuestQueryAnswer<GuestGameMessageResult>
+    { }
+
+    internal sealed class GuestGameMessageResult : GuestTextMessageResult
     {
         [JsonPropertyName("reply_markup")]
         public required GameMessageReplyMarkup ReplyMarkup { get; set; }

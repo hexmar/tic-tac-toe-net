@@ -9,4 +9,5 @@ internal interface ITelegramBotApiClient
     Task SendMessageAsync<T>(T message, CancellationToken cancellationToken) where T : ChatTextMessage;
     Task SendAnswerCallbackQuery(CallbackQueryAnswer message, CancellationToken cancellationToken);
     Task EditMessageAsync<T>(T message, CancellationToken cancellationToken) where T : IEditTextMessage;
+    Task SendAnswerGuestQuery<T>(GuestQueryAnswer<T> message, CancellationToken cancellationToken) where T : GuestTextMessageResult;
 }

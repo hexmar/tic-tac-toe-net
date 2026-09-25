@@ -14,12 +14,17 @@ internal sealed class Program
         builder.Services.Configure<TelegramApiConfiguration>(
             builder.Configuration.GetSection(TelegramApiConfiguration.ConfigurationKey));
 
-        builder.Services.AddHttpClient<ITelegramBotApiClient, TelegramBotApiClient>(static (services, client) =>
-        {
-            var options = services.GetRequiredService<IOptions<TelegramApiConfiguration>>();
-            client.BaseAddress = new Uri($"https://api.telegram.org/bot{options.Value.ApiKey}/");
-            client.Timeout = TimeSpan.FromSeconds(60);
-        });
+        builder.Services.AddRedaction();
+
+        builder.Services
+            .AddHttpClient<ITelegramBotApiClient, TelegramBotApiClient>(static (services, client) =>
+            {
+                var options = services.GetRequiredService<IOptions<TelegramApiConfiguration>>();
+                var config = options.Value;
+                client.BaseAddress = new Uri($"https://api.telegram.org/bot{config.ApiKey}/");
+                client.Timeout = TimeSpan.FromSeconds(config.Timeout);
+            })
+            .AddExtendedHttpClientLogging(builder.Configuration.GetSection("HttpClientLogging"));
 
         builder.Services.AddHostedService<TelegramBackgroundService>();
         builder.Services.AddSingleton<ITelegramUpdateQueue, TelegramUpdateQueue>(
