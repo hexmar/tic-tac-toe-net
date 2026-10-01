@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using TicTacToeNet.TelegramBot.Ai;
 using TicTacToeNet.TelegramBot.Clients;
 using TicTacToeNet.TelegramBot.Configurations;
 using TicTacToeNet.TelegramBot.Services;
@@ -26,6 +27,7 @@ internal sealed class Program
             })
             .AddExtendedHttpClientLogging(builder.Configuration.GetSection("HttpClientLogging"));
 
+        builder.Services.AddSingleton<IAiMoveStrategy, RandomAiMoveStrategy>();
         builder.Services.AddHostedService<TelegramBackgroundService>();
         builder.Services.AddSingleton<ITelegramUpdateQueue, TelegramUpdateQueue>(
             services => new TelegramUpdateQueue(10));

@@ -5,7 +5,7 @@ Guidelines to keep AI coding agents productive here. Keep this minimal and curre
 ## Layout & Solution Format
 - Multi-root monorepo using the XML `.slnx` format (`TicTacToeNet.slnx`). Two SDK-style projects at `HttpRequestLogger/` and `TicTacToeNet.TelegramBot/`.
 - Both target a single framework: `.NET 10.0` (`net10.0`), with `<Nullable>enable</Nullable>` and `<ImplicitUsings>enable</ImplicitUsings>`. No multi-targeting anywhere.
-- Folder names are `PascalCase`; file & class names are `PascalCase`; namespaces mirror the folder path from repo root (e.g. `TicTacToeNet.TelegramBot.Clients`). Infrastructure classes are `internal sealed` / `partial`. Style config lives in a single root-level `.editorconfig` (`root = true`) with `.NET Code` style/naming rules that apply to both projects; there are no per-project `.editorconfig`, `.analysissettings.json`, or `Directory.Build.*` files.
+- Folder names are `PascalCase`; file & class names are `PascalCase`; namespaces mirror the folder path from repo root (e.g. `TicTacToeNet.TelegramBot.Clients`). Infrastructure types are `internal`; the long-lived background services are `internal sealed partial` (`partial` is required for the `[LoggerMessage]` source generator). Style config lives in a single root-level `.editorconfig` (`root = true`) with `.NET Code` style/naming rules that apply to both projects; there are no per-project `.editorconfig`, `.analysissettings.json`, or `Directory.Build.*` files.
 
 ## Build, Run & Test
 - No test projects exist yet — there is nothing to run for tests. If asked to add tests, create a separate xUnit project first (do not wire one into the `.slnx` without confirming).

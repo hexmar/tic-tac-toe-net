@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using TicTacToeNet.TelegramBot.Ai;
 using TicTacToeNet.TelegramBot.Clients;
 using TicTacToeNet.TelegramBot.Services;
 using static TicTacToeNet.TelegramBot.Clients.TelegramBotApiTypes;
@@ -9,6 +10,7 @@ namespace TicTacToeNet.TelegramBot;
 internal sealed partial class TelegramBackgroundService(
     ITelegramUpdateQueue telegramUpdateQueue,
     ITelegramBotApiClient apiClient,
+    IAiMoveStrategy aiMoveStrategy,
     ILogger<TelegramBackgroundService> logger)
     : BackgroundService
 {
@@ -322,7 +324,7 @@ internal sealed partial class TelegramBackgroundService(
 
                         if (emptyCellsIndexes.Count == 1)
                         {
-                            state[emptyCellsIndexes[0]] = 'O';
+                            state[aiMoveStrategy.PickMove(state)] = 'O';
                             stateSum = CheckWin(state);
                             if (stateSum == '-')
                             {
@@ -362,10 +364,7 @@ internal sealed partial class TelegramBackgroundService(
                             continue;
                         }
 
-#pragma warning disable CA5394 // Do not use insecure randomness
-                        var botSelectedIndex = Random.Shared.Next(emptyCellsIndexes.Count);
-#pragma warning restore CA5394 // Do not use insecure randomness
-                        state[emptyCellsIndexes[botSelectedIndex]] = 'O';
+                        state[aiMoveStrategy.PickMove(state)] = 'O';
                         stateSum = CheckWin(state);
                         if (stateSum == 'O')
                         {
